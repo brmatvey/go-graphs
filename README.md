@@ -52,7 +52,8 @@ dependencies := map[int][]int{
 	2: {}, 
 	3: {},
 }
-directedGraph, err := graph.NewDirectedGraphFromCreator(graph.NewDirectedGraphCreator(dependencies))
+creator := graph.NewDirectedGraphCreator(dependencies)
+directedGraph, err := graph.NewDirectedGraphFromCreator(creator)
 if err != nil {
     t.Fatal("err must be nil")
 }
@@ -65,7 +66,8 @@ parentNode := graph.NewNode(2, childNode)
 
 simpleEdge := graph.NewEdge(1, 10.0, parentNode, childNode)
 
-weightedGraph, err := graph.NewWeightedGraph([]graph.Node[int]{parentNode, childNode}, []graph.Edge[int, int]{simpleEdge})
+nodes, edges := []graph.Node[int]{parentNode, childNode}, []graph.Edge[int, int]{simpleEdge}
+weightedGraph, err := graph.NewWeightedGraph(nodes, edges)
 if err != nil {
     t.Fatal("err must be nil")
 }
@@ -83,12 +85,13 @@ uniqueKGen := func() int {
     count++
     return count
 }
-weightedGraph, err := graph.NewWeightedGraphFromCreator(graph.NewWeightedGraphCreator(dependencies, uniqueKGen))
+creator := graph.NewWeightedGraphCreator(dependencies, uniqueKGen)
+weightedGraph, err := graph.NewWeightedGraphFromCreator(creator)
 if err != nil {
     t.Fatal("err must be nil")
 }
 ```
-## Graph package
+## Graphutil package
 ### Topological sort
 The topological sort algorithm takes a directed graph and returns an array of the nodes where each node appears before all the nodes it points to. The ordering of the nodes in the array is called a topological ordering.
 For using topological sort first of all create directed graph:
@@ -100,7 +103,8 @@ dependencies := map[string][]string{
     "smoking": {"work"},
     "work":    {},
 }
-directedGraph, err := graph.NewDirectedGraphFromCreator(graph.NewDirectedGraphCreator(dependencies))
+creator := graph.NewDirectedGraphCreator(dependencies)
+directedGraph, err := graph.NewDirectedGraphFromCreator(creator)
 if err != nil {
     t.Fatal("err must be nil")
 }
@@ -141,8 +145,8 @@ edgeKeyGen := func() int {
     count++
     return count
 }
-
-weightedGraph, err := graph.NewWeightedGraphFromCreator(graph.NewWeightedGraphCreator(dependencies, edgeKeyGen))
+creator := graph.NewWeightedGraphCreator(dependencies, edgeKeyGen)
+weightedGraph, err := graph.NewWeightedGraphFromCreator(creator)
 if err != nil {
     t.Fatal("error must be nil")
 }
