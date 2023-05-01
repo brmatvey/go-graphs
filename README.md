@@ -91,7 +91,7 @@ if err != nil {
     t.Fatal("err must be nil")
 }
 ```
-## Graphutil package
+## Graph util package
 ### Topological sort
 The topological sort algorithm takes a directed graph and returns an array of the nodes where each node appears before all the nodes it points to. The ordering of the nodes in the array is called a topological ordering.
 For using topological sort first of all create directed graph:
@@ -124,7 +124,41 @@ possibleSeqs := [][]string{
     {"start", "smoking", "eat", "commute", "work"},
 }
 ```
-If you have circular dependencies if graph, graphutil.TopologicalSort returns error.
+If you have circular dependencies in graph, topological sort returns error.
+### Bellman-Ford
+The Bellman–Ford algorithm is an algorithm that computes shortest paths from a single source vertex to all of the other vertices in a weighted digraph. It is slower than Dijkstra's algorithm for the same problem, but more versatile, as it is capable of handling graphs in which some of the edge weights are negative numbers.
+For using Bellman–Ford first of all create weighted graph:
+```go
+dependencies := map[int][]graph.Length[int]{
+    1: {graph.NewLength(2, 6), graph.NewLength(3, 1)},
+    2: {graph.NewLength(4, 7)},
+    3: {graph.NewLength(5, 1), graph.NewLength(6, 2)},
+    4: {graph.NewLength(7, 8)},
+    5: {graph.NewLength(7, -1)},
+    6: {graph.NewLength(8, 3)},
+    7: {graph.NewLength(8, 10)},
+    8: {},
+}
+count := 0
+edgeKeyGen := func() int {
+    count++
+    return count
+}
+creator := graph.NewWeightedGraphCreator(dependencies, edgeKeyGen)
+weightedGraph, err := graph.NewWeightedGraphFromCreator(creator)
+if err != nil {
+    t.Fatal("error must be nil")
+}
+```
+And call BellmanFord:
+```go
+lengths, err := graphutil.BellmanFord(startNodeKey, weightedGraph)
+if err != nil {
+    t.Fatal("error must be nil")
+}
+```
+Result of BellmanFord algo is hashmap with the shortest weight between start node and each other node in graph.
+Algorithm returns error if negative circle is found.
 ### Dijkstra
 Dijkstra is an algorithm for finding the shortest paths between nodes in a weighted graph.
 Remember, that you mustn't have negative weight in your graph.
@@ -159,3 +193,4 @@ if err != nil {
 }
 ```
 Result of Dijkstra algo is hashmap with the shortest weight between start node and each other node in graph.
+Algorithm returns error if negative weight is found.

@@ -41,6 +41,9 @@ func Dijkstra[K, T comparable](start T, weightedGraph graph.WeightedGraph[K, T])
 			if !ok {
 				return nil, errors.New(fmt.Sprintf("edge from %v to %v is not found", currentNode.Key(), n.Key()))
 			}
+			if e.Weight() < 0 {
+				return nil, errors.New("negative weight in edge in graph")
+			}
 			if res[n.Key()] > res[currentNode.Key()]+e.Weight() {
 				res[n.Key()] = res[currentNode.Key()] + e.Weight()
 			}
