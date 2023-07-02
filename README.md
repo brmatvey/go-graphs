@@ -1,5 +1,6 @@
 # Simple implementation of trivial graph algorithms
 You can use it, for instance, for educational, interview training etc.
+Unfortunately, the simulator does not yet support the general case of a graph. Two vertices in the same direction are connected by at most one edge so far.
 ## Graph package
 ### Node
 Node is simple generic implementation of graph node. It has knowledge about key (must be unique for graph) and children.
@@ -194,3 +195,34 @@ if err != nil {
 ```
 Result of Dijkstra algo is hashmap with the shortest weight between start node and each other node in graph.
 Algorithm returns error if negative weight is found.
+### Ford-Fulkerson
+The Ford–Fulkerson method or Ford–Fulkerson algorithm (FFA) is a greedy algorithm that computes the maximum flow in a flow network.
+For using Ford–Fulkerson first of all create weighted graph:
+```go
+dependencies := map[int][]graph.Length[int]{
+    1: {graph.NewLength(2, 15), graph.NewLength(3, 1)},
+    2: {graph.NewLength(4, 16)},
+    3: {graph.NewLength(5, 3), graph.NewLength(6, 2)},
+    4: {graph.NewLength(7, 8), graph.NewLength(6, 10)},
+    5: {graph.NewLength(7, 5)},
+    6: {graph.NewLength(8, 3)},
+    7: {graph.NewLength(8, 10)},
+    8: {},
+}
+count := 0
+edgeKeyGen := func() int {
+    count++
+    return count
+}
+
+weightedGraph, err := graph.NewWeightedGraphFromCreator(graph.NewWeightedGraphCreator(dependencies, edgeKeyGen))
+if err != nil {
+    t.Fatal("error must be nil")
+}
+```
+And call Ford–Fulkerson:
+```go
+flow := graphutil.FordFulkerson(1, 8, weightedGraph)
+```
+Result of Ford–Fulkerson algo is float64 value of max flow in network between start and finish nodes.
+Ford–Fulkerson is noexcept method. If flow doesn't exist, method returns zero flow value.
